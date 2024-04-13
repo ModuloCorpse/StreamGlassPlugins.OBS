@@ -15,7 +15,7 @@ namespace OBSPlugin
                     m_Host = reader.GetOrDefault("host", string.Empty),
                     m_Port = reader.GetOrDefault("port", 4455)
                 };
-                settings.m_Radios.AddRange(reader.GetList<RadioSet>("password"));
+                settings.m_Radios.AddRange(reader.GetList<RadioSet>("radios"));
                 return new(settings);
             }
 
