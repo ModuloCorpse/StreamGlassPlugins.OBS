@@ -1,13 +1,13 @@
 ﻿using CorpseLib;
-using CorpseLib.Json;
+using CorpseLib.DataNotation;
 
 namespace OBSPlugin
 {
     public class RadioItem(string sceneName)
     {
-        public class JsonSerializer : AJsonSerializer<RadioItem>
+        public class DataSerializer : ADataSerializer<RadioItem>
         {
-            protected override OperationResult<RadioItem> Deserialize(JsonObject reader)
+            protected override OperationResult<RadioItem> Deserialize(DataObject reader)
             {
                 if (reader.TryGet("scene", out string? scene) && scene != null)
                 {
@@ -20,7 +20,7 @@ namespace OBSPlugin
                 return new("Deserialization error", "No scene field in json");
             }
 
-            protected override void Serialize(RadioItem obj, JsonObject writer)
+            protected override void Serialize(RadioItem obj, DataObject writer)
             {
                 writer["scene"] = obj.m_SceneName;
                 writer["sources"] = obj.Sources;

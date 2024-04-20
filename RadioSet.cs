@@ -1,14 +1,14 @@
-﻿using CorpseLib.Json;
-using CorpseLib;
+﻿using CorpseLib;
 using System.Collections;
+using CorpseLib.DataNotation;
 
 namespace OBSPlugin
 {
     public class RadioSet(string name) : IEnumerable<RadioItem>
     {
-        public class JsonSerializer : AJsonSerializer<RadioSet>
+        public class DataSerializer : ADataSerializer<RadioSet>
         {
-            protected override OperationResult<RadioSet> Deserialize(JsonObject reader)
+            protected override OperationResult<RadioSet> Deserialize(DataObject reader)
             {
                 if (reader.TryGet("name", out string? name) && name != null)
                 {
@@ -21,7 +21,7 @@ namespace OBSPlugin
                 return new("Deserialization error", "No name field in json");
             }
 
-            protected override void Serialize(RadioSet obj, JsonObject writer)
+            protected override void Serialize(RadioSet obj, DataObject writer)
             {
                 writer["name"] = obj.m_Name;
                 writer["items"] = obj.Items;

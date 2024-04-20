@@ -1,13 +1,13 @@
 ﻿using CorpseLib;
-using CorpseLib.Json;
+using CorpseLib.DataNotation;
 
 namespace OBSPlugin
 {
     public class Settings
     {
-        public class JsonSerializer : AJsonSerializer<Settings>
+        public class DataSerializer : ADataSerializer<Settings>
         {
-            protected override OperationResult<Settings> Deserialize(JsonObject reader)
+            protected override OperationResult<Settings> Deserialize(DataObject reader)
             {
                 Settings settings = new()
                 {
@@ -19,7 +19,7 @@ namespace OBSPlugin
                 return new(settings);
             }
 
-            protected override void Serialize(Settings obj, JsonObject writer)
+            protected override void Serialize(Settings obj, DataObject writer)
             {
                 writer["password"] = obj.m_Password;
                 writer["host"] = obj.m_Host;

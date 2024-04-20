@@ -1,4 +1,4 @@
-﻿using CorpseLib.Json;
+﻿using CorpseLib.DataNotation;
 using StreamGlass.Core.Stat;
 
 namespace OBSPlugin
@@ -9,13 +9,13 @@ namespace OBSPlugin
         private string m_Scene = string.Empty;
         private string m_Source = string.Empty;
 
-        protected override void OnSave(JsonObject json)
+        protected override void OnSave(DataObject json)
         {
             json["scene"] = m_Scene;
             json["source"] = m_Source;
         }
 
-        protected override void OnLoad(JsonObject json)
+        protected override void OnLoad(DataObject json)
         {
             if (json.TryGet("scene", out string? scene))
                 m_Scene = scene!;

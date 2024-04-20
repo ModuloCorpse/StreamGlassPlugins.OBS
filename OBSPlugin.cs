@@ -1,4 +1,5 @@
-﻿using CorpseLib.Json;
+﻿using CorpseLib.DataNotation;
+using CorpseLib.Json;
 using StreamGlass.Core;
 using StreamGlass.Core.Plugin;
 
@@ -13,9 +14,9 @@ namespace OBSPlugin
 
         protected override void OnLoad()
         {
-            JsonHelper.RegisterSerializer(new RadioItem.JsonSerializer());
-            JsonHelper.RegisterSerializer(new RadioSet.JsonSerializer());
-            JsonHelper.RegisterSerializer(new Settings.JsonSerializer());
+            DataHelper.RegisterSerializer(new RadioItem.DataSerializer());
+            DataHelper.RegisterSerializer(new RadioSet.DataSerializer());
+            DataHelper.RegisterSerializer(new Settings.DataSerializer());
 
             string settingsFilePath = GetFilePath("settings.json");
             if (File.Exists(settingsFilePath))

@@ -1,5 +1,4 @@
-﻿using CorpseLib.Ini;
-using CorpseLib.Network;
+﻿using CorpseLib.Network;
 using OBSCorpse;
 using OBSCorpse.Requests;
 
