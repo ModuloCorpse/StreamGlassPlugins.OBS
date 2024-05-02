@@ -10,7 +10,7 @@ namespace OBSPlugin
 
         protected override void OnNewProcessStop() { }
 
-        protected override void OnProcessStart() => m_Manager.StartClient();
+        protected override void OnProcessStart() => Task.Delay(3000).ContinueWith(_ => m_Manager.StartClient());
 
         protected override void OnProcessStop() { }
     }

@@ -3,10 +3,10 @@ using StreamGlass.Core;
 
 namespace OBSPlugin.Actions
 {
-    public class ChangeSceneAction(Manager manager) : AStreamGlassAction(ms_Definition)
+    public class ChangeProfileAction(Manager manager) : AStreamGlassAction(ms_Definition)
     {
-        private static readonly ActionDefinition ms_Definition = new ActionDefinition("ChangeScene", "Change current OBS scene")
-            .AddArgument<string>("scene", "Scene to change to");
+        private static readonly ActionDefinition ms_Definition = new ActionDefinition("ChangeProfile", "Change current OBS profile")
+            .AddArgument<string>("profile", "Profile to change to");
         public override bool AllowDirectCall => true;
         public override bool AllowCLICall => true;
         public override bool AllowScriptCall => true;
@@ -16,7 +16,7 @@ namespace OBSPlugin.Actions
 
         public override object?[] Call(object?[] args)
         {
-            m_Manager.SetScene((string)args[0]!);
+            m_Manager.SetProfile((string)args[0]!);
             return [];
         }
     }

@@ -1,5 +1,6 @@
 ﻿using CorpseLib.DataNotation;
 using CorpseLib.Json;
+using OBSPlugin.Actions;
 using StreamGlass.Core;
 using StreamGlass.Core.Plugin;
 
@@ -32,6 +33,15 @@ namespace OBSPlugin
             OBSProcessListenerHandler processHandler = new(m_Manager);
             StreamGlassProcessListener.RegisterProcessHandler("obs64.exe", processHandler);
             StreamGlassContext.RegisterAggregator(() => new StringSourceAggregatorOBSSource(m_Manager));
+
+            StreamGlassActions.AddAction(new ChangeCollectionAction(m_Manager));
+            StreamGlassActions.AddAction(new ChangeProfileAction(m_Manager));
+            StreamGlassActions.AddAction(new ChangeSceneAction(m_Manager));
+            StreamGlassActions.AddAction(new StartRecordAction(m_Manager));
+            StreamGlassActions.AddAction(new StartStreamAction(m_Manager));
+            StreamGlassActions.AddAction(new StopRecordAction(m_Manager));
+            StreamGlassActions.AddAction(new StopStreamAction(m_Manager));
+            StreamGlassActions.AddAction(new ToggleRecordAction(m_Manager));
         }
 
         protected override void OnInit() { }

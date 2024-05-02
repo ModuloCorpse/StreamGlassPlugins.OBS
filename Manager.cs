@@ -112,5 +112,28 @@ namespace OBSPlugin
             OBSSetTextRequest setTextRequest = new(new(scene, source, -1), text);
             m_Client.Send(setTextRequest);
         }
+
+        public void OnRecordStatusChanged(bool newStatus, string outputState, string outputPath) { }
+
+        internal void StartStream() => m_Client?.Send(new OBSStartStreamRequest());
+        internal void StopStream() => m_Client?.Send(new OBSStopStreamRequest());
+        internal void StartRecord() => m_Client?.Send(new OBSStartRecordRequest());
+        internal string StopRecord()
+        {
+            OBSStopRecordRequest request = new();
+            m_Client?.Send(request);
+            return request.OutputPath;
+        }
+        internal bool ToggleRecord()
+        {
+            if (m_Client == null)
+                return false;
+            OBSToggleRecordRequest request = new();
+            m_Client.Send(request);
+            return request.OutputActive;
+        }
+
+        internal void SetCollection(string collection) => m_Client?.Send(new OBSSetCurrentSceneCollectionRequest(collection));
+        internal void SetProfile(string profile) => m_Client?.Send(new OBSSetCurrentProfileRequest(profile));
     }
 }
