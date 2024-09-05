@@ -1,5 +1,6 @@
 ﻿using CorpseLib.DataNotation;
 using CorpseLib.Json;
+using OBSCorpse;
 using OBSPlugin.Actions;
 using StreamGlass.Core;
 using StreamGlass.Core.Plugin;
@@ -15,6 +16,7 @@ namespace OBSPlugin
 
         protected override void OnLoad()
         {
+            OBSProtocol.StartLogging();
             DataHelper.RegisterSerializer(new RadioItem.DataSerializer());
             DataHelper.RegisterSerializer(new RadioSet.DataSerializer());
             DataHelper.RegisterSerializer(new Settings.DataSerializer());
