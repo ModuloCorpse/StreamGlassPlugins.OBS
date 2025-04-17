@@ -16,6 +16,7 @@ namespace OBSPlugin
                     m_Port = reader.GetOrDefault("port", 4455)
                 };
                 settings.m_Radios.AddRange(reader.GetList<RadioSet>("radios"));
+                settings.m_SourcesToRefresh.AddRange(reader.GetList<string>("sources_to_refresh"));
                 return new(settings);
             }
 
@@ -25,15 +26,18 @@ namespace OBSPlugin
                 writer["host"] = obj.m_Host;
                 writer["port"] = obj.m_Port;
                 writer["radios"] = obj.m_Radios;
+                writer["sources_to_refresh"] = obj.m_SourcesToRefresh;
             }
         }
 
         private readonly List<RadioSet> m_Radios = [];
+        private readonly List<string> m_SourcesToRefresh = [];
         private string m_Password = string.Empty;
         private string m_Host = "localhost";
         private int m_Port = 4455;
 
         public RadioSet[] Radios => [..m_Radios];
+        public string[] SourcesToRefresh => [.. m_SourcesToRefresh];
         public string Password => m_Password;
         public string Host => m_Host;
         public int Port => m_Port;

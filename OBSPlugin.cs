@@ -32,6 +32,7 @@ namespace OBSPlugin
             m_Manager.SetSetting(m_Settings);
             foreach (RadioSet set in m_Settings.Radios)
                 m_Manager.Add(set);
+            m_Manager.AddBrowserSourcesToRefresh(m_Settings.SourcesToRefresh);
             OBSProcessListenerHandler processHandler = new(m_Manager);
             StreamGlassProcessListener.RegisterProcessHandler("obs64.exe", processHandler);
             StreamGlassContext.RegisterAggregator(() => new StringSourceAggregatorOBSSource(m_Manager));

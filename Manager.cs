@@ -9,8 +9,10 @@ namespace OBSPlugin
         private OBSProtocol? m_Client = null;
         private Settings? m_Settings = null;
         private readonly Dictionary<string, RadioSet> m_RadioSets = [];
+        private readonly List<string> m_BrowserSourcesToRefresh = [];
 
         public void Add(RadioSet radioSet) => m_RadioSets[radioSet.Name] = radioSet;
+        public void AddBrowserSourcesToRefresh(string[] browserSourcesToRefresh) => m_BrowserSourcesToRefresh.AddRange(browserSourcesToRefresh);
 
         public void AddToSet(string setName, params Tuple<string, string>[] sources)
         {
@@ -41,6 +43,10 @@ namespace OBSPlugin
             m_Client?.Disconnect();
             string password = m_Settings.Password;
             m_Client = OBSProtocol.NewConnection(password, URI.Build("ws").Host(m_Settings.Host).Port(m_Settings.Port).Path("/").Build(), this);
+            List<OBSPressInputPropertiesButton> requests = [];
+            foreach (string browserSourceName in m_BrowserSourcesToRefresh)
+                requests.Add(new(browserSourceName, OBSPressInputPropertiesButton.Properties.RefreshNoCache));
+            m_Client!.Send(requests);
             //OBSLayout layout = new();
             //layout.ReadLayout(m_Client!);
             //StreamGlassContext.LOGGER.Log(layout.ToString());
