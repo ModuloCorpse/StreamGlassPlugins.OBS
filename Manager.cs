@@ -1,6 +1,8 @@
-﻿using CorpseLib.Network;
+﻿using CorpseLib;
+using CorpseLib.Logging;
 using OBSCorpse;
 using OBSCorpse.Requests;
+using StreamGlass.Core;
 
 namespace OBSPlugin
 {
@@ -10,6 +12,7 @@ namespace OBSPlugin
         private Settings? m_Settings = null;
         private readonly Dictionary<string, RadioSet> m_RadioSets = [];
         private readonly List<string> m_BrowserSourcesToRefresh = [];
+        private bool m_ShouldRefreshOnStart = false;
 
         public void Add(RadioSet radioSet) => m_RadioSets[radioSet.Name] = radioSet;
         public void AddBrowserSourcesToRefresh(string[] browserSourcesToRefresh) => m_BrowserSourcesToRefresh.AddRange(browserSourcesToRefresh);
@@ -36,17 +39,31 @@ namespace OBSPlugin
 
         internal void SetSetting(Settings setting) => m_Settings = setting;
 
+        private void RefreshSources()
+        {
+            List<OBSPressInputPropertiesButton> requests = [];
+            foreach (string browserSourceName in m_BrowserSourcesToRefresh)
+                requests.Add(new(browserSourceName, OBSPressInputPropertiesButton.Properties.RefreshNoCache));
+            m_Client!.Send(requests);
+        }
+
+        public void InitManager()
+        {
+            if (m_Client != null)
+                RefreshSources();
+            m_ShouldRefreshOnStart = true;
+        }
+
         public void StartClient()
         {
             if (m_Settings == null)
                 return;
             m_Client?.Disconnect();
             string password = m_Settings.Password;
-            m_Client = OBSProtocol.NewConnection(password, URI.Build("ws").Host(m_Settings.Host).Port(m_Settings.Port).Path("/").Build(), this);
-            List<OBSPressInputPropertiesButton> requests = [];
-            foreach (string browserSourceName in m_BrowserSourcesToRefresh)
-                requests.Add(new(browserSourceName, OBSPressInputPropertiesButton.Properties.RefreshNoCache));
-            m_Client!.Send(requests);
+            m_Client = OBSProtocol.NewConnection(URI.Build("ws").Host(m_Settings.Host).Port(m_Settings.Port).Path("/").Build(), password, this);
+            if (m_ShouldRefreshOnStart)
+                RefreshSources();
+
             //OBSLayout layout = new();
             //layout.ReadLayout(m_Client!);
             //StreamGlassContext.LOGGER.Log(layout.ToString());
@@ -141,5 +158,12 @@ namespace OBSPlugin
 
         internal void SetCollection(string collection) => m_Client?.Send(new OBSSetCurrentSceneCollectionRequest(collection));
         internal void SetProfile(string profile) => m_Client?.Send(new OBSSetCurrentProfileRequest(profile));
+        internal void AddChapter()
+        {
+            OBSRequestBatch batch = new();
+            batch.AddRequest(new OBSCreateRecordChapterRequest());
+            batch.AddRequest(new AitumVerticalAddChapter());
+            m_Client?.Send(batch);
+        }
     }
 }

@@ -1,13 +1,16 @@
 ﻿using CorpseLib.DataNotation;
 using CorpseLib.Json;
+using CorpseLib.Logging;
+using CorpseLib.Network.API;
 using OBSCorpse;
 using OBSPlugin.Actions;
+using OBSPlugin.Endpoints;
 using StreamGlass.Core;
 using StreamGlass.Core.Plugin;
 
 namespace OBSPlugin
 {
-    public class OBSPlugin() : APlugin("OBS")
+    public class OBSPlugin() : APlugin("OBS"), IAPIPlugin
     {
         private readonly Manager m_Manager = new();
         private Settings m_Settings = new();
@@ -16,6 +19,7 @@ namespace OBSPlugin
 
         protected override void OnLoad()
         {
+            OBSProtocol.OBS_LOG.Add(new LogInFile(StreamGlassPathManager.PathOf("./log/${y}${M}${d}${h}-OBS.log")));
             OBSProtocol.StartLogging();
             DataHelper.RegisterSerializer(new RadioItem.DataSerializer());
             DataHelper.RegisterSerializer(new RadioSet.DataSerializer());
@@ -47,8 +51,12 @@ namespace OBSPlugin
             StreamGlassActions.AddAction(new ToggleRecordAction(m_Manager));
         }
 
-        protected override void OnInit() { }
+        protected override void OnInit() => m_Manager.InitManager();
 
         protected override void OnUnload() => JsonParser.WriteToFile<Settings>(GetFilePath("settings.json"), m_Settings);
+
+        public AEndpoint[] GetEndpoints() => [
+            new ClipEndpoint(m_Manager)
+        ];
     }
 }
