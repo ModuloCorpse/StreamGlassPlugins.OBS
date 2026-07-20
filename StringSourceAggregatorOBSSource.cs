@@ -24,6 +24,6 @@ namespace OBSPlugin
         }
 
         protected override string GetAggregatorType() => "obs_source";
-        protected override void OnAggregate(string text) => m_Manager.SetSourceText(m_Scene, m_Source, text);
+        protected override async void OnAggregate(string text) => await m_Manager.SetSourceText(m_Scene, m_Source, text);
     }
 }

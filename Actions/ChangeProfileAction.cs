@@ -14,7 +14,7 @@ namespace OBSPlugin.Actions
 
         private readonly Manager m_Manager = manager;
 
-        public override object?[] Call(object?[] args)
+        public override async Task<object?[]> Call(object?[] args)
         {
             m_Manager.SetProfile((string)args[0]!);
             return [];

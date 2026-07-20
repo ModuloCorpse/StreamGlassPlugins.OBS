@@ -1,8 +1,7 @@
 ﻿using CorpseLib;
-using CorpseLib.Logging;
 using OBSCorpse;
 using OBSCorpse.Requests;
-using StreamGlass.Core;
+using OBSPlugin.CustomRequest;
 
 namespace OBSPlugin
 {
@@ -39,53 +38,53 @@ namespace OBSPlugin
 
         internal void SetSetting(Settings setting) => m_Settings = setting;
 
-        private void RefreshSources()
+        private async Task RefreshSources()
         {
             List<OBSPressInputPropertiesButton> requests = [];
             foreach (string browserSourceName in m_BrowserSourcesToRefresh)
                 requests.Add(new(browserSourceName, OBSPressInputPropertiesButton.Properties.RefreshNoCache));
-            m_Client!.Send(requests);
+            await m_Client!.Send(requests);
         }
 
-        public void InitManager()
+        public async Task InitManager()
         {
             if (m_Client != null)
-                RefreshSources();
+                await RefreshSources();
             m_ShouldRefreshOnStart = true;
         }
 
-        public void StartClient()
+        public async Task StartClient()
         {
             if (m_Settings == null)
                 return;
             m_Client?.Disconnect();
             string password = m_Settings.Password;
-            m_Client = OBSProtocol.NewConnection(URI.Build("ws").Host(m_Settings.Host).Port(m_Settings.Port).Path("/").Build(), password, this);
+            m_Client = await OBSProtocol.NewConnection(URI.Build("ws").Host(m_Settings.Host).Port(m_Settings.Port).Path("/").Build(), password, this);
             if (m_ShouldRefreshOnStart)
-                RefreshSources();
+                await RefreshSources();
 
             //OBSLayout layout = new();
             //layout.ReadLayout(m_Client!);
             //StreamGlassContext.LOGGER.Log(layout.ToString());
         }
 
-        public void SetScene(string sceneName)
+        public async Task SetScene(string sceneName)
         {
             if (m_Client == null)
                 return;
-            m_Client.Send(new OBSSetCurrentProgramSceneRequest(sceneName));
+            await m_Client.Send(new OBSSetCurrentProgramSceneRequest(sceneName));
         }
 
-        public void SetSourceVisibility(string sceneName, string sourceName, bool visibility)
+        public async Task SetSourceVisibility(string sceneName, string sourceName, bool visibility)
         {
             if (m_Client == null)
                 return;
             OBSGetSceneSourceRequest getSceneSourceRequest = new(sceneName, sourceName);
-            m_Client.Send(getSceneSourceRequest);
+            await m_Client.Send(getSceneSourceRequest);
             if (getSceneSourceRequest.Source.ID >= 0)
             {
                 OBSSetSceneItemEnabledRequest request = new(getSceneSourceRequest.Source, visibility);
-                m_Client.Send(request);
+                await m_Client.Send(request);
             }
         }
 
@@ -93,12 +92,12 @@ namespace OBSPlugin
 
         public void OnSceneChanged(string newScene) { }
 
-        public void OnSceneItemEnableStateChanged(string sceneName, int sceneItemID, bool enabled)
+        public async void OnSceneItemEnableStateChanged(string sceneName, int sceneItemID, bool enabled)
         {
             if (!enabled || m_Client == null)
                 return;
             OBSGetSceneSourceRequest request = new(sceneName, sceneItemID);
-            m_Client.Send(request);
+            await m_Client.Send(request);
             OBSSource source = request.Source;
             foreach (RadioSet set in m_RadioSets.Values)
             {
@@ -113,14 +112,14 @@ namespace OBSPlugin
                                 getSceneItemIds.Add(new(item.SceneName, itemSource));
                         }
                     }
-                    m_Client.Send(getSceneItemIds);
+                    await m_Client.Send(getSceneItemIds);
                     List<OBSSetSceneItemEnabledRequest> requests = [];
                     foreach (OBSGetSceneSourceRequest getSceneItemId in getSceneItemIds)
                     {
                         if (getSceneItemId.Source.ID >= 0)
                             requests.Add(new(getSceneItemId.Source, false));
                     }
-                    m_Client.Send(requests);
+                    await m_Client.Send(requests);
                     return;
                 }
             }
@@ -128,12 +127,12 @@ namespace OBSPlugin
 
         public void OnStreamStatusChanged(bool newStatus, string outputState) { }
 
-        internal void SetSourceText(string scene, string source, string text)
+        internal async Task SetSourceText(string scene, string source, string text)
         {
             if (m_Client == null)
                 return;
             OBSSetTextRequest setTextRequest = new(new(scene, source, -1), text);
-            m_Client.Send(setTextRequest);
+            await m_Client.Send(setTextRequest);
         }
 
         public void OnRecordStatusChanged(bool newStatus, string outputState, string outputPath) { }
@@ -147,12 +146,12 @@ namespace OBSPlugin
             m_Client?.Send(request);
             return request.OutputPath;
         }
-        internal bool ToggleRecord()
+        internal async Task<bool> ToggleRecord()
         {
             if (m_Client == null)
                 return false;
             OBSToggleRecordRequest request = new();
-            m_Client.Send(request);
+            await m_Client.Send(request);
             return request.OutputActive;
         }
 

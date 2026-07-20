@@ -17,7 +17,7 @@ namespace OBSPlugin
 
         protected override PluginInfo GeneratePluginInfo() => new("1.0.0-beta", "ModuloCorpse<https://www.twitch.tv/chaporon_>");
 
-        protected override void OnLoad()
+        protected override async Task OnLoad()
         {
             OBSProtocol.OBS_LOG.Add(new LogInFile(StreamGlassPathManager.PathOf("./log/${y}${M}${d}${h}-OBS.log")));
             OBSProtocol.StartLogging();
@@ -51,9 +51,9 @@ namespace OBSPlugin
             StreamGlassActions.AddAction(new ToggleRecordAction(m_Manager));
         }
 
-        protected override void OnInit() => m_Manager.InitManager();
+        protected override async Task OnInit() => await m_Manager.InitManager();
 
-        protected override void OnUnload() => JsonParser.WriteToFile<Settings>(GetFilePath("settings.json"), m_Settings);
+        protected override async Task OnUnload() => JsonParser.WriteToFile<Settings>(GetFilePath("settings.json"), m_Settings);
 
         public AEndpoint[] GetEndpoints() => [
             new ClipEndpoint(m_Manager)

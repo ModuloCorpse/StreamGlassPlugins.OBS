@@ -13,6 +13,6 @@ namespace OBSPlugin.Actions
 
         private readonly Manager m_Manager = manager;
 
-        public override object?[] Call(object?[] _) => [ m_Manager.ToggleRecord() ];
+        public override async Task<object?[]> Call(object?[] _) => [ m_Manager.ToggleRecord() ];
     }
 }

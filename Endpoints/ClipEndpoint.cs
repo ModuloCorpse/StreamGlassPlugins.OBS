@@ -7,7 +7,7 @@ namespace OBSPlugin.Endpoints
     {
         private readonly Manager m_Manager = manager;
 
-        protected override Response OnPostRequest(Request request)
+        protected override async Task<Response> OnPostRequest(Request request)
         {
             m_Manager.AddChapter();
             return new(200, "Ok");
