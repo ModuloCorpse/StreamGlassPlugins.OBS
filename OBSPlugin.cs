@@ -56,7 +56,7 @@ namespace OBSPlugin
         protected override async Task OnUnload() => JsonParser.WriteToFile<Settings>(GetFilePath("settings.json"), m_Settings);
 
         public AEndpoint[] GetEndpoints() => [
-            new ClipEndpoint(m_Manager)
+            new ChapterEndpoint(m_Manager)
         ];
     }
 }

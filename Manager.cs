@@ -164,5 +164,19 @@ namespace OBSPlugin
             batch.AddRequest(new AitumVerticalAddChapter());
             m_Client?.Send(batch);
         }
+
+        internal void AddChapter(string chapterName, string verticalChapterName)
+        {
+            OBSRequestBatch batch = new();
+            if (string.IsNullOrEmpty(chapterName))
+                batch.AddRequest(new OBSCreateRecordChapterRequest());
+            else
+                batch.AddRequest(new OBSCreateRecordChapterRequest(chapterName));
+            if (string.IsNullOrEmpty(verticalChapterName))
+                batch.AddRequest(new AitumVerticalAddChapter());
+            else
+                batch.AddRequest(new AitumVerticalAddChapter(verticalChapterName));
+            m_Client?.Send(batch);
+        }
     }
 }

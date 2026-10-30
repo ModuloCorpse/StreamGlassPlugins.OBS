@@ -13,9 +13,11 @@ namespace OBSPlugin.Actions
 
         private readonly Manager m_Manager = manager;
 
-        public override async Task<object?[]> Call(object?[] _)
+        public override async Task<object?[]> Call(object?[] args)
         {
-            m_Manager.AddChapter();
+            string chapterName = args.Length > 0 && args[0] is string name ? name : string.Empty;
+            string verticalChapterName = args.Length > 1 && args[1] is string verticalName ? verticalName : string.Empty;
+            m_Manager.AddChapter(chapterName, verticalChapterName);
             return [];
         }
     }
